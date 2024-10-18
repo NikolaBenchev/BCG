@@ -31,7 +31,9 @@
                     size.height, 
                     size.depth
                 );
+
                 const material = new THREE.MeshPhongMaterial({ color: color });
+
                 const box = new THREE.Mesh( geometry, material );
                 box.position.set(
                     position.x,
@@ -41,10 +43,28 @@
                 scene.add(box);
             }
 
+            function addPolygon(points, position, color) {
+                var shape = new THREE.Shape();
+                shape.moveTo(0, 0);
+                for(let i = 0; i < points.length; i++) {
+                    shape.lineTo(points[i].x, points[i].y);
+                }
+                shape.lineTo(points[0].x, points[0].y);
+                
+                var geometry = new THREE.ShapeGeometry( shape );
+                var material = new THREE.MeshBasicMaterial( {
+                    color: color
+                } );
+                const polygon = new THREE.Mesh(geometry, material);
+                polygon.position.set(position.x, position.y, position.z);
+                polygon.rotation.y = Math.PI / 2;
+                scene.add(polygon);
+            }
+
             /*
                 Ground level: -1.5
             */
-
+            const GROUND_Y = -1.5;
             //Ground
             addRect({ 
                 width: 100, 
@@ -62,22 +82,118 @@
                 height: 3,
                 depth: 12
             }, {
-                x: -2.5,
+                x: -2.5 - 2 / 2,
                 y: 0,
                 z: -4
-            }, "gray");
-
-
-            // Window
+            }, "#A1662F");
+            
+            // Far wall
             addRect({
-                width: 0.2,
-                height: 0.5,
-                depth: 0.01
+                width: 4,
+                height: 2,
+                depth: 4,
+            }, {
+                x: -2.5 + 2,
+                y: -0.5,
+                z: - 4 - 6 - 2
+            }, "#A1662F")
+
+
+            // Windows
+            for(let i = 0; i < 2; i++) {
+                for(let j = 0; j < 16; j++) {
+                    const offsetZ = 0.3 * j,
+                        height = 0.5 - i * 0.2,
+                        offsetY = i * (0.5 + 0.1);
+                    addRect({
+                        width: 0.01,
+                        height: height,
+                        depth: 0.2
+                    }, {
+                        x: -2.5,
+                        y: 0,
+                        y: GROUND_Y + height / 2 + offsetY,
+                        z: (- 4 - 6 + 4.8) - offsetZ
+                    }, "#dbe1e3");
+                }
+            }
+
+            // Window 
+
+            // Shed top
+            addRect({
+                width: 1.05,
+                height: 0.02,
+                depth: 5.05
+            }, {
+                x: -2.5 + 1.05 / 2,
+                y: GROUND_Y + (0.9),
+                z: (- 4 - 6 + 5.05 / 2)
+            }, "black")
+            
+            // Shed middle
+            addRect({
+                width: 1,
+                height: 0.1,
+                depth: 5
+            }, {
+                x: -2,
+                y: GROUND_Y + (0.9 + 0.005 + 0.05),
+                z: (- 4 - 6 + 2.5)
+            }, "white")
+
+            // Shed bottom
+            addRect({
+                width: 1.05,
+                height: 0.01,
+                depth: 5.05
+            }, {
+                x: -2.5 + 1.05 / 2,
+                y: GROUND_Y + (0.9 + 0.005 + 0.1),
+                z: (- 4 - 6 + 5.05 / 2)
+            }, "black")
+
+            // CINEMARK text
+            let points = [{
+                x: 0.1,
+                y: 0
+            }, {
+                x: 0.25,
+                y: 0.25
+            }, {
+                x: 0.15,
+                y: 0.25
             }, {
                 x: 0,
-                y: 0,
-                z: 0
-            }, "#dbe1e3");
+                y: 0.1
+            }, {
+                x: -0.15,
+                y: 0.25
+            }, {
+                x: -0.25,
+                y: 0.25
+            }, {
+                x: -0.1,
+                y: 0
+            }, {
+                x: -0.25,
+                y: -0.25
+            }, {
+                x: -0.15,
+                y: -0.25
+            }, {
+                x: 0,
+                y: -0.1
+            }, {
+                x: 0.15,
+                y: -0.25
+            }, {
+                x: 0.25,
+                y: -0.25
+            }];
+
+            addPolygon(points, {x: -2.41, y: 1, z: 0}, "white");
+            addPolygon(points, {x: -2.4, y: 1, z: 0}, "red");
 
             var light = new THREE.PointLight( 'white', 200 );
             light.position.set( 3, 3, 8 );
