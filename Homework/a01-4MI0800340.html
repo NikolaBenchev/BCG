@@ -1,0 +1,89 @@
+<html>
+	<head>
+		<style>
+			body { margin: 0; }
+			canvas { width: 100%; height: 100% }
+		</style>
+		<script type="importmap">
+			{ "imports": {
+				"three": "https://cdn.jsdelivr.net/npm/three@0.164.0/build/three.module.js"
+			} }
+		</script>
+	</head>
+	<body>
+		<script type="module">
+		    import * as THREE from "three";
+
+            var renderer = new THREE.WebGLRenderer();
+            renderer.setSize( window.innerWidth, window.innerHeight );
+            document.body.appendChild( renderer.domElement );
+
+            var scene = new THREE.Scene();
+
+            var aspect = window.innerWidth/window.innerHeight;
+            var camera = new THREE.PerspectiveCamera( 30, aspect );
+            camera.position.set( 3, 3, 8 );
+            camera.lookAt( scene.position );
+
+            function addRect(size, position, color) {
+                const geometry = new THREE.BoxGeometry(
+                    size.width,
+                    size.height, 
+                    size.depth
+                );
+                const material = new THREE.MeshPhongMaterial({ color: color });
+                const box = new THREE.Mesh( geometry, material );
+                box.position.set(
+                    position.x,
+                    position.y,
+                    position.z
+                );
+                scene.add(box);
+            }
+
+            /*
+                Ground level: -1.5
+            */
+
+            //Ground
+            addRect({ 
+                width: 100, 
+                height: 1, 
+                depth: 100
+            }, { 
+                x: 0, 
+                y: -2, 
+                z: 0 
+            }, "gray");
+
+            // Main structure
+            addRect({
+                width: 2,
+                height: 3,
+                depth: 12
+            }, {
+                x: -2.5,
+                y: 0,
+                z: -4
+            }, "gray");
+
+
+            // Window
+            addRect({
+                width: 0.2,
+                height: 0.5,
+                depth: 0.01
+            }, {
+                x: 0,
+                y: 0,
+                z: 0
+            }, "#dbe1e3");
+
+            var light = new THREE.PointLight( 'white', 200 );
+            light.position.set( 3, 3, 8 );
+            scene.add( light );
+
+            renderer.render( scene, camera );
+		</script>
+	</body>
+</html>
