@@ -1,0 +1,105 @@
+﻿<html>
+	<head>
+		<style>
+			body { margin: 0; }
+			canvas { width: 100%; height: 100% }
+		</style>
+		<script type="importmap">
+			{ "imports": {
+				"three": "https://cdn.jsdelivr.net/npm/three@0.164.0/build/three.module.js"
+			} }
+		</script>
+	</head>
+	<body>
+		<script type="module">
+		
+			import * as THREE from "three";
+
+			// Задача: нарисувайте цветно хапче-капсула,
+			// с издължено тяло, със заоблени краища, като
+			// се върти хапчето, а не цялата сцена, за да
+			// не се движи и камерата
+
+			
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.setAnimationLoop( drawFrame );
+			document.body.appendChild( renderer.domElement );
+
+			// като начало фонът е светлосив, само за да видите
+			// как като се върти сцената заедно със светлината има
+			// момент, в който светлината е от другата страна,
+			// и тогава виждаме обекта черен -- ако и фонът
+			// беше черен, няма да видим нищо, докато сцената
+			// не обърне някоя осветена част към нас. В решението
+			// си махнете този сив фон, да си стои черния.
+			// Тогава въртете само обекта, а не цялата сцена,
+			// така светлината ще тръгва от едно и също място
+			// и сцената винаги ще е осветена "от към нас".
+			var scene = new THREE.Scene();
+			scene.background = new THREE.Color( 'gray' );
+			
+			var aspect = window.innerWidth/window.innerHeight;
+			var camera = new THREE.PerspectiveCamera( 30, aspect );
+			camera.position.set( 0, 0, 20 );
+			camera.lookAt( scene.position );
+
+			// Хапчето като един обект
+			var pill = new THREE.Group();
+			// в този обект pill сложете елементите на хапчето;
+			// както сцената има метод add, така и всеки обект
+			// има add ... т.е. и pill трябва да има add
+			
+			// Цилиндър - вероятно ще го ползвате за хапчето
+			// тук е сложен само за да демонстрира онзи дълъг
+			// коментар 20 реда по-нагоре
+			// const group = [];
+			let group = new THREE.Group();
+
+			var geometry = new THREE.CylinderGeometry( 1, 1, 2, 16 );
+			var material = new THREE.MeshPhongMaterial( {color:'red'} );
+			var cylinder = new THREE.Mesh( geometry, material );
+			cylinder.position.set(0, 1, 0);
+			group.add(cylinder);
+
+			var geometry = new THREE.SphereGeometry(1, 16, 16)
+			var material = new THREE.MeshPhongMaterial({ color: "red"});
+			var top = new THREE.Mesh( geometry, material );
+			top.position.set(0, 2, 0);
+			group.add(top);
+			
+			var geometry = new THREE.CylinderGeometry( 1, 1, 2, 16 );
+			var material = new THREE.MeshPhongMaterial( {color:'yellow'} );
+			var cylinder2 = new THREE.Mesh( geometry, material );
+			cylinder2.position.set(0, -1, 0);
+			group.add(cylinder2);
+
+			var geometry = new THREE.SphereGeometry(1, 16, 16, Math.PI, Math.PI * 2);
+			var material = new THREE.MeshPhongMaterial({ color: "yellow"});
+			var bottom = new THREE.Mesh( geometry, material );
+			bottom.position.set(0, -2, 0);
+			group.add(bottom);
+			
+			// for(let i = 0; i < group.children; i++) {
+			// }
+			scene.add(group);
+			// Светлина
+			var light = new THREE.PointLight( 'white', 700 );
+			light.position.set( 0, 0, 20 );
+			scene.add(light);
+			// Въртене на сцената - в решението трябва да се
+			// върти хапчето, а не сцената
+			function drawFrame( t )
+			{
+				group.rotation.set(t / 1000, t / 1200, 0);
+				// console.log(group.children);
+				// for(let i = 0; i < group.children.length; i++) {
+				// 	group.children[i].rotation.x = t / 1000;
+				// 	group.children[i].rotation.y = t / 1200;
+				// }
+				renderer.render( scene, camera );
+			}
+			
+		</script>
+	</body>
+</html>
