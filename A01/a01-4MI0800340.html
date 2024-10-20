@@ -1,0 +1,670 @@
+<html>
+	<head>
+		<style>
+			body { margin: 0; }
+			canvas { width: 100%; height: 100% }
+		</style>
+		<script type="importmap">
+			{ "imports": {
+				"three": "https://cdn.jsdelivr.net/npm/three@0.164.0/build/three.module.js"
+			} }
+		</script>
+	</head>
+	<body>
+		<script type="module">
+		    import * as THREE from "three";
+
+            let renderer = new THREE.WebGLRenderer();
+            renderer.setSize( window.innerWidth, window.innerHeight );
+            document.body.appendChild( renderer.domElement );
+
+            let scene = new THREE.Scene();
+
+            let aspect = window.innerWidth/window.innerHeight;
+            let camera = new THREE.PerspectiveCamera( 30, aspect );
+            camera.position.set( 3, 3, 8 );
+            camera.lookAt( scene.position );
+
+            function addRect(size, position, color) {
+                const geometry = new THREE.BoxGeometry(
+                    size.width,
+                    size.height, 
+                    size.depth
+                );
+
+                const material = new THREE.MeshPhongMaterial({ color: color });
+
+                const box = new THREE.Mesh( geometry, material );
+                box.position.set(
+                    position.x,
+                    position.y,
+                    position.z
+                );
+                return box;
+            }
+
+            function addPolygon(points, position, color) {
+                let shape = new THREE.Shape();
+                shape.moveTo(0, 0);
+                for(let i = 0; i < points.length; i++) {
+                    shape.lineTo(points[i].x, points[i].y);
+                }
+                shape.lineTo(points[0].x, points[0].y);
+                
+                let geometry = new THREE.ShapeGeometry( shape );
+                let material = new THREE.MeshBasicMaterial( {
+                    color: color
+                } );
+                const polygon = new THREE.Mesh(geometry, material);
+                polygon.position.set(position.x, position.y, position.z);
+                polygon.rotation.y = Math.PI / 2;
+                // scene.add(polygon);
+                return polygon;
+            }
+
+            function drawD(position, color) {
+                const points = [{
+                    x: 0.1,
+                    y: 0.25,
+                }, {
+                    x: 0.1,
+                    y: -0.25
+                }, {
+                    x: 0.1,
+                    y: -0.15
+                }, {
+                    x: 0.1,
+                    y: 0.15
+                }, {
+                    x: 0.1,
+                    y: -0.25,
+                }, {
+                    x: 0,
+                    y: -0.25
+                }, {
+                    x: 0,
+                    y: 0.25
+                }];
+
+                let shape = new THREE.Shape();
+                shape.moveTo(0, 0);
+                shape.lineTo(points[0].x, points[0].y);
+                shape.bezierCurveTo(0.35, 0.35, 0.35, -0.35, points[1].x, points[1].y)
+                shape.lineTo(points[2].x, points[2].y);
+                shape.bezierCurveTo(0.25, -0.25, 0.25, 0.25, points[3].x, points[3].y)
+                shape.lineTo(points[4].x, points[4].y);
+                shape.lineTo(points[5].x, points[5].y);
+                shape.lineTo(points[6].x, points[6].y);
+                shape.lineTo(points[0].x, points[0].y);
+                
+                let geometry = new THREE.ShapeGeometry( shape );
+                let material = new THREE.MeshBasicMaterial( {
+                    color: color
+                } );
+                const polygon = new THREE.Mesh(geometry, material);
+                polygon.position.set(position.x, position.y, position.z);
+                polygon.rotation.y = Math.PI / 2;
+                return polygon;
+            }
+
+            function drawC(position, color) {
+                const points = [{
+                    x: 0.1,
+                    y: 0.25,
+                }, {
+                    x: 0.1,
+                    y: -0.25
+                }, {
+                    x: 0.1,
+                    y: -0.15
+                }, {
+                    x: 0.1,
+                    y: 0.15
+                }, {
+                    x: 0.1,
+                    y: -0.25,
+                }];
+
+                let shape = new THREE.Shape();
+                shape.moveTo(0, 0);
+                shape.lineTo(points[0].x, points[0].y);
+                shape.bezierCurveTo(-0.35, 0.35, -0.35, -0.35, points[1].x, points[1].y)
+                shape.lineTo(points[2].x, points[2].y);
+                shape.bezierCurveTo(-0.25, -0.25, -0.25, 0.25, points[3].x, points[3].y)
+                shape.lineTo(points[4].x, points[4].y);
+                shape.lineTo(points[0].x, points[0].y);
+                
+                let geometry = new THREE.ShapeGeometry( shape );
+                let material = new THREE.MeshBasicMaterial( {
+                    color: color
+                } );
+                const polygon = new THREE.Mesh(geometry, material);
+                polygon.position.set(position.x, position.y, position.z);
+                polygon.rotation.y = Math.PI / 2;
+                return polygon;
+            }
+
+            function drawI(position, color) {
+                const points = [{
+                    x: -0.1,
+                    y: 0.25
+                }, {
+                    x: 0.1,
+                    y: 0.25
+                }, {
+                    x: 0.1,
+                    y: -0.25
+                }, {
+                    x: -0.1,
+                    y: -0.25
+                }, {
+                    x: -0.1,
+                    y: 0.25
+                }];
+                
+                let shape = new THREE.Shape();
+                shape.moveTo(0, 0);
+                for(let i = 0; i < points.length; i++) {
+                    shape.lineTo(points[i].x, points[i].y);
+                }
+
+                let geometry = new THREE.ShapeGeometry( shape );
+                let material = new THREE.MeshBasicMaterial( {
+                    color: color
+                } );
+                const polygon = new THREE.Mesh(geometry, material);
+                polygon.position.set(position.x, position.y, position.z);
+                polygon.rotation.y = Math.PI / 2;
+                return polygon;
+            }
+
+            function drawN(position, color) {
+                const points = [{
+                    x: -0.1, 
+                    y: 0.25
+                }, {
+                    x: 0.1,
+                    y: 0.25
+                }, {
+                    x: 0.25,
+                    y: -0.15
+                }, {
+                    x: 0.25,
+                    y: 0.25
+                }, {
+                    x: 0.45,
+                    y: 0.25
+                }, {
+                    x: 0.45,
+                    y: -0.25
+                }, {
+                    x: 0.25,
+                    y: -0.25
+                }, {
+                    x: 0.1,
+                    y: 0.15
+                }, {
+                    x: 0.1,
+                    y: -0.25
+                }, {
+                    x: -0.1,
+                    y: -0.25
+                }, {
+                    x: -0.1,
+                    y: 0.25
+                }];
+
+                const shape = new THREE.Shape();
+                shape.moveTo(0, 0);
+                for(let i = 0; i < points.length; i++) {
+                    shape.lineTo(points[i].x, points[i].y);
+                }
+
+                let geometry = new THREE.ShapeGeometry( shape );
+                let material = new THREE.MeshBasicMaterial( {
+                    color: color
+                } );
+                const polygon = new THREE.Mesh(geometry, material);
+                polygon.position.set(position.x, position.y, position.z);
+                polygon.rotation.y = Math.PI / 2;
+                return polygon;
+            }
+
+            function drawE(position, color) {
+                const points = [{
+                    x: -0.1,
+                    y: 0.25
+                }, {
+                    x: 0.35,
+                    y: 0.25
+                }, {
+                    x: 0.35,
+                    y: 0.15
+                }, {
+                    x: 0.1,
+                    y: 0.15
+                }, {
+                    x: 0.1,
+                    y: 0.05
+                }, {
+                    x: 0.35,
+                    y: 0.05
+                }, {
+                    x: 0.35,
+                    y: -0.05
+                }, {
+                    x: 0.1,
+                    y: -0.05
+                }, {
+                    x: 0.1,
+                    y: -0.15
+                }, {
+                    x: 0.35,
+                    y: -0.15
+                }, {
+                    x: 0.35,
+                    y: -0.25
+                }, {
+                    x: -0.1,
+                    y: -0.25
+                }, {
+                    x: -0.1,
+                    y: 0.25
+                }];
+
+                const shape = new THREE.Shape();
+                shape.moveTo(0, 0);
+                for(let i = 0; i < points.length; i++) {
+                    shape.lineTo(points[i].x, points[i].y);
+                }
+
+                let geometry = new THREE.ShapeGeometry( shape );
+                let material = new THREE.MeshBasicMaterial( {
+                    color: color
+                } );
+                const polygon = new THREE.Mesh(geometry, material);
+                polygon.position.set(position.x, position.y, position.z);
+                polygon.rotation.y = Math.PI / 2;
+                return polygon;
+            }
+
+            function drawM(position, color) {
+                const points = [{
+                    x: -0.1,
+                    y: 0.25 
+                }, {
+                    x: 0.1,
+                    y: 0.25
+                }, {
+                    x: 0.3,
+                    y: 0.05
+                }, {
+                    x: 0.5,
+                    y: 0.25,
+                }, {
+                    x: 0.7,
+                    y: 0.25
+                }, {
+                    x: 0.7,
+                    y: -0.25
+                }, {
+                    x: 0.5,
+                    y: -0.25
+                }, {
+                    x: 0.5,
+                    y: 0.15
+                }, {
+                    x: 0.3,
+                    y: -0.1
+                }, {
+                    x: 0.1,
+                    y: 0.15
+                }, {
+                    x: 0.1,
+                    y: -0.25
+                }, {
+                    x: -0.1,
+                    y: -0.25
+                }, {
+                    x: -0.1,
+                    y: 0.25
+                }];
+
+                const shape = new THREE.Shape();
+
+                shape.moveTo(0, 0);
+                for(let i = 0; i < points.length; i++) {
+                    shape.lineTo(points[i].x, points[i].y);
+                }
+
+                let geometry = new THREE.ShapeGeometry( shape );
+                let material = new THREE.MeshBasicMaterial( {
+                    color: color
+                } );
+                const polygon = new THREE.Mesh(geometry, material);
+                polygon.position.set(position.x, position.y, position.z);
+                polygon.rotation.y = Math.PI / 2;
+                return polygon;
+            }
+
+            function drawA(position, color) {
+                const points = [{
+                    x: 0,
+                    y: 0.25
+                }, {
+                    x: 0.35,
+                    y: -0.25
+                }, {
+                    x: 0.15,
+                    y: -0.25,
+                }, {
+                    x: 0.05,
+                    y: -0.05
+                }, {
+                    x: -0.05,
+                    y: -0.05
+                }, {
+                    x: -0.15,
+                    y: -0.25
+                }, {
+                    x: -0.35,
+                    y: -0.25
+                }, {
+                    x: 0,
+                    y: 0.25
+                }];
+
+                const shape = new THREE.Shape();
+
+                shape.moveTo(0, 0);
+                for(let i = 0; i < points.length; i++) {
+                    shape.lineTo(points[i].x, points[i].y);
+                }
+
+                let geometry = new THREE.ShapeGeometry( shape );
+                let material = new THREE.MeshBasicMaterial( {
+                    color: color
+                } );
+                const polygon = new THREE.Mesh(geometry, material);
+                polygon.position.set(position.x, position.y, position.z);
+                polygon.rotation.y = Math.PI / 2;
+                return polygon;
+            }
+
+            function addTv(position) {
+                const tvGroup = new THREE.Group();
+                const leftBorder = addRect({
+                    width: 0.025,
+                    height: 0.35,
+                    depth: 0.05
+                }, {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                }, "red");
+                tvGroup.add(leftBorder);
+
+                const rightBorder = addRect({
+                    width: 0.025,
+                    height: 0.35,
+                    depth: 0.05
+                }, {
+                    x: 0.5,
+                    y: 0,
+                    z: 0
+                }, "red");
+                tvGroup.add(rightBorder);
+
+                const topBorder = addRect({
+                    width: 0.5,
+                    height: 0.025,
+                    depth: 0.05
+                }, {
+                    x: 0.25,
+                    y: 0.175,
+                    z: 0
+                }, "red");
+                tvGroup.add(topBorder);
+
+                const bottomBorder = addRect({
+                    width: 0.5,
+                    height: 0.025,
+                    depth: 0.05
+                }, {
+                    x: 0.25,
+                    y: -0.175,
+                    z: 0
+                }, "red");
+                tvGroup.add(bottomBorder);
+                
+                const screen = addRect({
+                    width: 0.5,
+                    height: 0.35,
+                    depth: 0.001
+                }, {
+                    x: 0.25,
+                    y: 0,
+                    z: 0
+                }, "white")
+                tvGroup.add(screen);
+                
+                tvGroup.rotation.y = Math.PI / 2;
+                tvGroup.position.set(position.x, position.y, position.z);
+                
+                return tvGroup;
+            }
+
+            /*
+                Ground level: -1.5
+            */
+            const GROUND_Y = -1.5;
+            //Ground
+            const ground = addRect({ 
+                width: 100, 
+                height: 1, 
+                depth: 100
+            }, { 
+                x: 0, 
+                y: -2, 
+                z: 0 
+            }, "gray");
+            scene.add(ground)
+
+            // Main structure
+            const mainStructure = addRect({
+                width: 2,
+                height: 3,
+                depth: 12
+            }, {
+                x: -2.5 - 2 / 2,
+                y: 0,
+                z: -4
+            }, "#A1662F");
+            scene.add(mainStructure);
+            
+            // Far wall
+            const farWall = addRect({
+                width: 4,
+                height: 2,
+                depth: 4,
+            }, {
+                x: -2.5 + 2,
+                y: -0.5,
+                z: - 4 - 6 - 2
+            }, "#A1662F")
+            scene.add(farWall);
+
+            // Windows
+            for(let i = 0; i < 2; i++) {
+                for(let j = 0; j < 16; j++) {
+                    const offsetZ = 0.3 * j,
+                        height = 0.5 - i * 0.2,
+                        offsetY = i * (0.5 + 0.1);
+                    const window = addRect({
+                        width: 0.01,
+                        height: height,
+                        depth: 0.2
+                    }, {
+                        x: -2.5,
+                        y: 0,
+                        y: GROUND_Y + height / 2 + offsetY,
+                        z: (- 4 - 6 + 4.8) - offsetZ
+                    }, "#dbe1e3");
+                    scene.add(window);
+                }
+            }
+
+            const shedGroup = new THREE.Group();
+            // Shed top
+            const shedTop = addRect({
+                width: 0.76,
+                height: 0.02,
+                depth: 5.05
+            }, {
+                x: -2.5 + 0.76 / 2,
+                y: GROUND_Y + (0.9),
+                z: (- 4 - 6 + 5.05 / 2)
+            }, "black")
+            shedGroup.add(shedTop);
+
+            // Shed middle
+            const shedMiddle = addRect({
+                width: 0.75,
+                height: 0.1,
+                depth: 5
+            }, {
+                x: -2.5 + 0.75 / 2,
+                y: GROUND_Y + (0.9 + 0.005 + 0.05),
+                z: (- 4 - 6 + 2.5)
+            }, "white")
+            shedGroup.add(shedMiddle)
+
+            // Shed bottom
+            const shedBottom = addRect({
+                width: 0.76,
+                height: 0.01,
+                depth: 5.05
+            }, {
+                x: -2.5 + 0.76 / 2,
+                y: GROUND_Y + (0.9 + 0.005 + 0.1),
+                z: (- 4 - 6 + 5.05 / 2)
+            }, "black")
+            shedGroup.add(shedBottom);
+
+            scene.add(shedGroup);
+
+            // CINEMARK text
+
+            // X
+            let points = [{
+                x: 0.1,
+                y: 0
+            }, {
+                x: 0.25,
+                y: 0.25
+            }, {
+                x: 0.15,
+                y: 0.25
+            }, {
+                x: 0,
+                y: 0.1
+            }, {
+                x: -0.15,
+                y: 0.25
+            }, {
+                x: -0.25,
+                y: 0.25
+            }, {
+                x: -0.1,
+                y: 0
+            }, {
+                x: -0.25,
+                y: -0.25
+            }, {
+                x: -0.15,
+                y: -0.25
+            }, {
+                x: 0,
+                y: -0.1
+            }, {
+                x: 0.15,
+                y: -0.25
+            }, {
+                x: 0.25,
+                y: -0.25
+            }];
+
+            const x = addPolygon(points, {x: -2.4, y: 1, z: 0}, "red");
+            scene.add(x);
+            const xShadow = addPolygon(points, {x: -2.41, y: 1, z: 0}, "white");
+            scene.add(xShadow);
+
+            // D
+            const d = drawD({x: -2.4, y: 1, z: -0.3}, "red");
+            scene.add(d);
+            const dShadow = drawD({x: -2.41, y: 1, z: -0.3}, "white");
+            scene.add(dShadow);
+
+            // TV
+            const firstTv = addTv({ x: -2.4, y: -1, z: 1 });
+            scene.add(firstTv);
+            
+            const secondTv = addTv({ x: -2.4, y: -1, z: -1 });
+            scene.add(secondTv);
+
+            
+            const thirdTv = addTv({ x: 0.5, y: -1, z: -10 });
+            thirdTv.rotation.y = 0;
+            scene.add(thirdTv);
+
+            // Cinema text
+            const cinemaTextGroup = new THREE.Group(),
+                c = drawC({x: -2.4, y: 1, z: -5.6}, "red"),
+                cShadow = drawC({x: -2.43, y: 1, z: -5.6}, "black");
+            cinemaTextGroup.add(c);
+            cinemaTextGroup.add(cShadow);
+
+            const i = drawI({ x: -2.4, y: 1, z: -6}, "red"),
+                iShadow = drawI({ x: -2.43, y: 1, z: -6}, "black");
+            cinemaTextGroup.add(i);
+            cinemaTextGroup.add(iShadow);
+
+            const n = drawN({ x: -2.4, y: 1, z: -6.35}, "red"),
+                nShadow = drawN({ x: -2.43, y: 1, z: -6.35}, "black");
+            cinemaTextGroup.add(n);
+            cinemaTextGroup.add(nShadow);
+
+            const e = drawE({ x: -2.4, y: 1, z: -7.1}, "red"),
+                eShadow = drawE({ x: -2.43, y: 1, z: -7.1}, "black");
+            cinemaTextGroup.add(e);
+            cinemaTextGroup.add(eShadow);
+
+            const m = drawM({ x: -2.4, y: 1, z: -7.7}, "red"),
+                mShadow = drawM({ x: -2.43, y: 1, z: -7.7}, "black");
+            cinemaTextGroup.add(m);
+            cinemaTextGroup.add(mShadow);
+
+            const a = drawA({ x: -2.4, y: 1, z: -8.85}, "red"),
+                aShadow = drawA({ x: -2.43, y: 1, z: -8.85}, "black");
+            
+            cinemaTextGroup.add(a);
+            cinemaTextGroup.add(aShadow);
+
+            scene.add(cinemaTextGroup);
+            
+            // Trash bin
+            const geometry = new THREE.CylinderGeometry( 0.075, 0.075, 0.25, 32 ); 
+            const material = new THREE.MeshBasicMaterial( {color: "darkgray"} ); 
+            const cylinder = new THREE.Mesh( geometry, material ); 
+            cylinder.position.set(-2.4, -1.5 + 0.25 / 2, -4.75)
+            scene.add( cylinder );
+
+
+            let light = new THREE.PointLight( 'white', 200 );
+            light.position.set( 3, 3, 8 );
+            scene.add( light );
+
+            renderer.render( scene, camera );
+		</script>
+	</body>
+</html>
