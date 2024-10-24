@@ -1,0 +1,88 @@
+﻿<html>
+	<head>
+		<style>
+			body { margin: 0; }
+			canvas { width: 100%; height: 100% }
+		</style>
+		<script type="importmap">
+			{ "imports": {
+				"three": "https://cdn.jsdelivr.net/npm/three@0.164.0/build/three.module.js"
+			} }
+		</script>
+	</head>
+	<body>
+		<script type="module">
+		
+			import * as THREE from "three";
+
+			// Задача: оцветете сферите плавно, минавайки по
+			// целия видим спектър
+			
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.setAnimationLoop( drawFrame );
+			document.body.appendChild( renderer.domElement );
+
+			var scene = new THREE.Scene();
+			scene.background = new THREE.Color( 'gainsboro' );
+			
+			var aspect = window.innerWidth/window.innerHeight;
+			var camera = new THREE.PerspectiveCamera( 30, aspect );
+			camera.position.set( 0, 0, 16 );
+			camera.lookAt( new THREE.Vector3() );
+
+		
+			var group = new THREE.Group();
+			scene.add( group );
+				
+			var geometry = new THREE.SphereGeometry( 0.4, 8, 16 );
+			
+			// Генериране на кръг от N сфери
+			var N = 40;
+			for (var i=0; i<N; i++)
+			{
+				// всяка сфера е на ъгъл alpha
+				var alpha = 2*Math.PI*i/N;
+				
+				// разстоянието до центъра е ту 3.0, ту 3.7
+				var r = 3+0.7*(i%2);
+				const colorValue = Math.floor(255 * i / 14) % 255;
+				let redColorValue = colorValue,
+					greenColorValue = 255 - colorValue,
+					blueColorValue = 0;
+				if(Math.floor(i / 14) == 1) {
+					redColorValue = 255 - colorValue;
+					greenColorValue = 0;
+					blueColorValue = colorValue;
+				}
+				if(Math.floor(i / 14) == 2) {
+					redColorValue = 0,
+					greenColorValue = colorValue;
+					blueColorValue = 255 - colorValue;
+				}
+				const color = new THREE.Color(`rgb(${redColorValue}, ${greenColorValue}, ${blueColorValue})`);
+				console.log(color);
+				var material = new THREE.MeshPhongMaterial({color: color});
+				var sphere = new THREE.Mesh( geometry, material );
+				
+				// сферата е разположена на ъгъл alpha по
+				// окръжност с радиус r 
+				sphere.position.set( r*Math.cos(alpha), r*Math.sin(alpha), 0 );
+				
+				group.add( sphere );
+			}
+			
+			
+			var light = new THREE.PointLight( 'white', 1000 );
+			light.position.set( 0, 0, 20 );
+			scene.add( light );
+			
+			function drawFrame( t )
+			{
+				// group.rotation.z = t/3000;
+				renderer.render( scene, camera );
+			}
+			
+		</script>
+	</body>
+</html>
