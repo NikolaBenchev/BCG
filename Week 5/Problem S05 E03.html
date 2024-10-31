@@ -1,0 +1,94 @@
+﻿<html>
+	<head>
+		<style>
+			body { margin: 0; }
+			canvas { width: 100%; height: 100% }
+		</style>
+		<script type="importmap">
+			{ "imports": {
+				"three": "https://cdn.jsdelivr.net/npm/three@0.164.0/build/three.module.js",
+				"csg/": "https://cdn.jsdelivr.net/gh/looeee/threejs-csg@main/src/CSG/"
+			} }
+		</script>
+	</head>
+	<body>
+		<script type="module">
+		
+			import * as THREE from "three";
+			import {CSG} from "csg/CSG.js";
+			
+
+			// Задача: конструирайте порцеланова чаша със
+			// загладени ръбове. 
+
+			
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.setAnimationLoop( drawFrame );
+			document.body.appendChild( renderer.domElement );
+
+			var scene = new THREE.Scene();
+			scene.background = new THREE.Color( 'pink' );
+			
+			var aspect = window.innerWidth/window.innerHeight;
+			var camera = new THREE.PerspectiveCamera( 30, aspect );
+			camera.position.set( 0, 0, 10 );
+			camera.lookAt( new THREE.Vector3() );
+
+			const csg = new CSG();
+	
+			// начален стадий на чаша
+			var material = new THREE.MeshPhongMaterial( {
+				color: 'purple',
+				shininess: 100,
+				specular: 'white'
+			});
+
+			const mug = new THREE.Group();
+			scene.add(mug);
+
+			var body = new THREE.Mesh( new THREE.CylinderGeometry( 1.1, 1.1, 2.5, 40 ), material ),
+				hole = new THREE.Mesh( new THREE.CylinderGeometry( 1, 1, 2.5, 40));	
+			
+			const edge = new THREE.Mesh( new THREE.TorusGeometry( 1.05, 0.05, 40, 40), material);
+			edge.position.set(0, 1.25, 0);
+			edge.rotation.x = Math.PI / 2;
+			mug.add(edge);
+			const bottomEdge = edge.clone();
+			bottomEdge.position.set(0, -1.25, 0);
+			mug.add(bottomEdge);
+
+			const handle = new THREE.Mesh( new THREE.TorusGeometry(0.75, 0.1, 40, 40, Math.PI), material);
+			handle.position.set(-1.1, 0, 0);
+			handle.rotation.z = Math.PI / 2;
+			mug.add(handle);
+
+			const mugBase = new THREE.Mesh( new THREE.CylinderGeometry( 1.05, 1.05, 0.25, 40), material);
+			mugBase.position.set(0, -1.175, 0);
+			mug.add(mugBase);
+
+			csg.subtract( [body, hole] );
+			var mugBody = csg.toMesh();
+			mugBody.material = material;
+			mug.add(mugBody);
+
+		
+			
+			var light = new THREE.PointLight( 'white', 150 );
+			light.position.set( 0, 5, 10 );
+			scene.add( light );
+			
+			
+			function drawFrame( t )
+			{
+				// въртим чашата
+				mug.rotation.x = t/1000;
+				mug.rotation.z = Math.sin(2*mug.rotation.x)/2;
+				mug.rotation.y = t/1300;
+				
+				renderer.render( scene, camera );
+			}
+			
+		</script>
+	</body>
+</html>

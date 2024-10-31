@@ -1,0 +1,82 @@
+﻿<html>
+	<head>
+		<style>
+			body { margin: 0; }
+			canvas { width: 100%; height: 100% }
+		</style>
+		<script type="importmap">
+			{ "imports": {
+				"three": "https://cdn.jsdelivr.net/npm/three@0.164.0/build/three.module.js",
+				"csg/": "https://cdn.jsdelivr.net/gh/looeee/threejs-csg@main/src/CSG/"
+			} }
+		</script>
+	</head>
+	<body>
+		<script type="module">
+		
+			import * as THREE from "three";
+			import {CSG} from "csg/CSG.js";
+			
+			
+			// Задача: конструирайте златен осмоъгълен
+			// пепелник-сувенир за четирима. 
+
+			
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.setAnimationLoop( drawFrame );
+			document.body.appendChild( renderer.domElement );
+
+			var scene = new THREE.Scene();
+			scene.background = new THREE.Color( 'midnightblue' );
+			
+			var aspect = window.innerWidth/window.innerHeight;
+			var camera = new THREE.PerspectiveCamera( 30, aspect );
+			camera.position.set( 0, 0, 8 );
+			camera.lookAt( new THREE.Vector3() );
+
+		
+			// Пепелник (за момента е цилиндър,
+			// но вие ще го оформите на пепелник)
+			var base = new THREE.Mesh(new THREE.CylinderGeometry( 1.75, 2, 1, 8 )),
+				centerSubtraction = new THREE.Mesh(new THREE.CylinderGeometry(1.25, 1.75, 1, 8)),
+				gutter1 = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 5, 64));
+			centerSubtraction.position.set(0, 0.3, 0);
+			gutter1.position.set(0, 0.5, 0);
+			gutter1.rotation.x = Math.PI / 2;
+			gutter1.rotation.z = Math.PI / 8;
+			const gutter2 = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 5, 64));
+			gutter2.position.set(0, 0.5, 0);
+			gutter2.rotation.x = Math.PI / 2;
+			gutter2.rotation.z = 5 * Math.PI / 8;
+			// scene.add(gutter1);
+
+			var csg = new CSG();
+			csg.subtract( [base, centerSubtraction, gutter1, gutter2] );
+
+			var ashTray = csg.toMesh();
+			ashTray.material = new THREE.MeshPhongMaterial( {color: 'gold',specular: 'white'} );
+			scene.add(ashTray);
+			
+			
+			
+			var light = new THREE.PointLight( 'white', 150 );
+			light.position.set( 0, 5, 10 );
+			scene.add( light );
+			
+			
+			function drawFrame( t )
+			{
+				// въртим пепелника
+				ashTray.rotation.x = 0.3+0.2*Math.sin(ashTray.rotation.y);
+				ashTray.rotation.y = t/1000;
+				
+				// gutter1.rotation.x = 0.3+0.2*Math.sin(gutter1.rotation.y);
+				// gutter1.rotation.y = t/1000;
+				
+				renderer.render( scene, camera );
+			}
+			
+		</script>
+	</body>
+</html>
