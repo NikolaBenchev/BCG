@@ -49,17 +49,80 @@
 
 			const body = new THREE.Mesh(
 				new THREE.BoxGeometry( 4, 4, 4 )
-			),
-			hole = new THREE.Mesh(
-				new THREE.BoxGeometry(3.9, 3.9, 3.9)
-			); 
+			);
 
-			csg.subtract( [body, hole] );
+			const subtractions = [];
+
+			//
+			const mainHole = new THREE.Mesh(
+				new THREE.BoxGeometry(3.9, 3.9, 3.9)
+			);
+			subtractions.push(mainHole);
+			
+			const diceHole = new THREE.Mesh(
+				new THREE.CylinderGeometry(0.5, 0.5, 4, 32)
+			);
+			
+			const oneHole = diceHole.clone();
+			oneHole.position.set(0, 2, 0);
+
+			subtractions.push(oneHole);
+
+			//? six
+			for(let i = -1; i <= 1; i += 2) {
+				for(let j = -1; j <= 1; j++) {
+					const curr = diceHole.clone();
+					curr.position.set(i + i * 0.25, -2, j + j * 0.25);
+
+					subtractions.push(curr)
+				}
+			}
+
+			diceHole.rotation.x = Math.PI / 2;
+			//? two
+			for(let i = -1; i <= 1; i += 2) {
+				const curr = diceHole.clone();
+				curr.position.set(i, i, 2);
+
+				subtractions.push(curr);
+			}
+
+			//? five
+			for(let i = -1; i <= 1; i+= 1) {
+				for(let j = -1 * Math.abs(i); j <= Math.abs(i); j += 2) {
+					const curr = diceHole.clone();
+					curr.position.set(i, j, -2);
+
+					subtractions.push(curr);
+				}
+			}
+
+			diceHole.rotation.z = Math.PI / 2;
+
+			//? three
+			for(let i = -1; i <= 1; i++) {
+				const curr = diceHole.clone();
+				curr.position.set(2, i, i);
+
+				subtractions.push(curr)
+			}
+
+			//? four
+			for(let i = -1; i <= 1; i += 2) {
+				for(let j = -1; j <= 1; j += 2) {
+					const curr = diceHole.clone();
+					curr.position.set(-2, i, j);
+
+					subtractions.push(curr)
+				}
+			}
+
+
+			csg.subtract( [body, ...subtractions] );
 			const dieBody = csg.toMesh();
 			dieBody.material = new THREE.MeshLambertMaterial();
 			dieBody.castShadow = true;
 			die.add(dieBody);
-			// die.add(dieBody);
 
 			
 			// широка платформа, която ще бъде осветявана

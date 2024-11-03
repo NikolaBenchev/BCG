@@ -1,0 +1,79 @@
+<html>
+	<head>
+		<style>
+			body { margin: 0; }
+			canvas { width: 100%; height: 100% }
+		</style>
+		<script type="importmap">
+			{ "imports": {
+				"three": "https://cdn.jsdelivr.net/npm/three@0.164.0/build/three.module.js",
+				"csg/": "https://cdn.jsdelivr.net/gh/looeee/threejs-csg@main/src/CSG/"
+			} }
+		</script>
+	</head>
+	<body>
+		<script type="module">
+		    import * as THREE from "three";
+			import {CSG} from "csg/CSG.js";
+
+            //? Section configurations
+
+			const csg = new CSG();
+
+            let renderer = new THREE.WebGLRenderer();
+            renderer.setSize( window.innerWidth, window.innerHeight );
+            document.body.appendChild( renderer.domElement );
+
+            let scene = new THREE.Scene();
+
+            let aspect = window.innerWidth/window.innerHeight;
+            let camera = new THREE.PerspectiveCamera( 30, aspect );
+            camera.position.set( 3, 3, 8 );
+            camera.lookAt( scene.position );
+
+            //? Section functions
+            
+            function addRect(size, material) {
+                const geometry = new THREE.BoxGeometry(
+                    size.width,
+                    size.height, 
+                    size.depth
+                );
+
+                if(material)
+                    return new THREE.Mesh( geometry, material);
+                else
+                    return new THREE.Mesh( geometry );
+                    
+            }
+
+            //? Main
+
+            const yard = new THREE.Group(),
+                building = new THREE.Group();
+
+            
+            const mainStructureBody = addRect({
+                width: 3,
+                height: 2,
+                depth: 3
+            });
+
+			csg.subtract( [mainStructure, ...subtractions] );
+            const mainStructure = csg.toMesh();            
+			mainStructure.material = new THREE.MeshLambertMaterial();
+			building.add(mainStructure);
+
+            scene.add(yard);
+            scene.add(building);
+
+            //? Section configurations final
+
+            let light = new THREE.PointLight( 'white', 200 );
+            light.position.set( 3, 3, 8 );
+            scene.add( light );
+
+            renderer.render( scene, camera );
+		</script>
+	</body>
+</html>
