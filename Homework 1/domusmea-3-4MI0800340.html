@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+
+<!-- Име Фамилиев, група X, ф.н. XXXXX -->
+
+<html>
+	<head>
+		<style>
+			body { margin: 0; }
+			canvas { width: 100%; height: 100% }
+		</style>
+		<script type="importmap">
+			{ "imports": {
+				"three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+				"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/",
+				"domus-mea": "https://cdn.jsdelivr.net/gh/boytchev/CourseOKG@latest/domus-mea.js"
+			} }
+		</script>
+	</head>
+	
+	<body>
+
+		<script type="module">
+			import * as THREE from "three";
+			import {domusMea, scene, renderer, camera} from "domus-mea";
+
+			domusMea( '4MI0800340' ); // факултетен номер 
+			
+			// 1. преименувайте файла на moidom-g-fn.html
+			//    g=номер на група, а fn=факултетен номер
+			//
+			// 2. първо сменете параметъра на domusMea да
+			//    е факултетният ви номер - по този начин
+			//    ще се генерират сцена, земя и контур на
+			//    къщата ви, която ще трябва да направите
+			//
+			// 3. едва тогава почвайте да строите стените
+			//    и да добавяте исканите обекти по стаите
+			//
+			// 4. кубът по-долу е само за пример как може
+			//    да се слагат обекти, които правят сянка
+			//
+			// 5. едно зелено квадратче е широко 1 метър,
+			//    а белите квадратчета са големи по 20 см
+			//
+			// 6. горд съм как коментарите са равно дълги
+
+			
+			// куб 2х2х2 метра
+			var geometry = new THREE.BoxGeometry( 7, 2, 0.2 ),
+			material = new THREE.MeshPhongMaterial( {color: 'crimson'} );
+				
+			const north = new THREE.Mesh( geometry, material );
+			north.position.set( -0.5, 1, -4.9 );
+			north.receiveShadow = true;
+			north.castShadow = true;
+			scene.add( north );
+
+			geometry = new THREE.BoxGeometry(0.2, 2, 4.2);
+			const northEast = new THREE.Mesh(geometry, material);
+			northEast.position.set(2.9, 1, -2.9)
+			scene.add(northEast);
+
+			const northWest = northEast.clone();
+			northWest.position.set(-3.9, 1, -2.9);
+			scene.add(northWest);
+
+
+			const south = north.clone();
+			south.position.set(-0.5, 1, 7.9);
+			scene.add( south );
+
+			geometry = new THREE.BoxGeometry(0.2, 2, 2.1);
+			const southEast = new THREE.Mesh(geometry, material);
+			southEast.position.set(2.9, 1, 6.9);
+			scene.add(southEast);
+
+			const southWest = new THREE.Mesh(geometry, material);
+			southWest.position.set(-3.9, 1, 6.9);
+			scene.add(southWest);
+
+			
+			const east = north.clone();
+			east.rotation.set(0, Math.PI / 2, 0);
+			east.position.set(3.9, 1, 2.5);
+			scene.add(east);
+
+			geometry = new THREE.BoxGeometry(1, 2, 0.2);
+			const eastNorth = new THREE.Mesh(geometry, material);
+			eastNorth.position.set(3.3, 1, -0.9);
+			scene.add(eastNorth);
+
+			const eastSouth = eastNorth.clone(); 
+			eastSouth.position.set(3.3, 1, 5.9);
+			scene.add(eastSouth);
+
+			const west = east.clone();
+			west.position.set(-7.9, 1, 2.5);
+			scene.add(west);
+
+			const westNorth = northEast.clone();
+			westNorth.rotation.set(0, Math.PI / 2, 0);
+			westNorth.position.set(-5.9, 1, -0.9);
+			scene.add(westNorth);
+			
+			const westSouth = westNorth.clone();
+			westSouth.position.set(-5.9, 1, 5.9);
+			scene.add(westSouth);
+
+		</script>
+		
+	</body>
+</html>
+
+
