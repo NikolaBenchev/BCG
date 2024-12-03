@@ -1,0 +1,66 @@
+﻿<html>
+	<head>
+		<style>
+			body { margin: 0; }
+			canvas { width: 100%; height: 100% }
+		</style>
+		<script type="importmap">
+			{ "imports": {
+				"three": "https://cdn.jsdelivr.net/npm/three@0.164.0/build/three.module.js"
+			} }
+		</script>
+	</head>
+	<body>
+		<script type="module">
+		
+			import * as THREE from "three";
+
+			// Задача: направете ... биберон от синусоида.
+			// Заготовката по-долу, ако я пуснете, трябва
+			// само да покаже празна страница, нищо повече
+
+			
+			var renderer = new THREE.WebGLRenderer({antialias:true});
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.setAnimationLoop( drawFrame );
+			document.body.appendChild( renderer.domElement );
+
+			var scene = new THREE.Scene();
+			scene.background = new THREE.Color( 'seagreen' );
+			
+			var aspect = window.innerWidth/window.innerHeight;
+			var camera = new THREE.PerspectiveCamera( 30, aspect );
+			camera.position.set( 0, 10, 40 );
+			camera.lookAt( new THREE.Vector3() );
+
+
+			// профил на биберона
+			var profile = [
+				new THREE.Vector2( 1,  3 ),
+				new THREE.Vector2( 3, -3 ),
+				// и т.н.
+			];
+
+			// създаване на 3D формата на биберона
+			var geometry = 'сами намерете как да създадете ротационно тяло';
+			var pacifier = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( {specular: 'linen'} ) );
+			
+			// светлини
+			var light = new THREE.PointLight( 'white', 17000 );
+			light.position.set( 100, 50, 0 );
+			scene.add( light );
+			
+			light = new THREE.PointLight( 'white', 17000 );
+			light.position.set( -100, 50, 0 );
+			scene.add( light );
+			
+			function drawFrame( t )
+			{
+				pacifier.rotation.set( t/1000, t/1200, t/1300 );
+				
+				renderer.render( scene, camera );
+			}
+			
+		</script>
+	</body>
+</html>

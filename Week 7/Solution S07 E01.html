@@ -1,0 +1,113 @@
+﻿<html>
+	<head>
+		<style>
+			body { margin: 0; }
+			canvas { width: 100%; height: 100% }
+		</style>
+		<script type="importmap">
+			{ "imports": {
+				"three": "https://cdn.jsdelivr.net/npm/three@0.164.0/build/three.module.js"
+			} }
+		</script>
+	</head>
+	<body>
+		<script type="module">
+		
+			import * as THREE from "three";
+			import {Pillar} from "https://cdn.jsdelivr.net/gh/boytchev/CourseOKG@main/Pillar.js"
+
+			// Задача: Създадени са два пилона на случайни
+			// места и случайни височини. Направете обекта
+			// ball да се движи по права линия от върха на
+			// единия пилон, до върха на другия пилон. Като
+			// стигне до втория връх си остава там.
+			
+			var renderer = new THREE.WebGLRenderer({antialias: true});
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.setAnimationLoop( drawFrame );
+			document.body.appendChild( renderer.domElement );
+			
+			// включваме генерирането на меки сенки
+			renderer.shadowMap.enabled = true;
+			renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+			var scene = new THREE.Scene();
+			scene.background = new THREE.Color( 'lightskyblue' );
+			
+			var aspect = window.innerWidth/window.innerHeight;
+			var camera = new THREE.PerspectiveCamera( 30, aspect );
+			camera.position.set( 0, 80, 250 );
+			camera.lookAt( new THREE.Vector3( 0, 20, 0 ));
+
+			
+			// координати на началната точка на движението
+			var x1 = 10+60*Math.random();
+			var y1 = 10+40*Math.random();
+			var z1 = 40-80*Math.random();
+			
+			// координати на крайната точка на движението
+			var x2 = -10-60*Math.random();
+			var y2 = 10+40*Math.random();
+			var z2 = 40-80*Math.random();
+
+			
+			// създаване на подвижната сфера
+			// създаване на подвижната сфера
+			var ball = new THREE.Mesh(
+				new THREE.SphereGeometry( 4, 32, 32 ),
+				new THREE.MeshPhongMaterial( {color: 'dimgray', shininess: 10, specular: 'white'} )
+			);
+			ball.position.set( x1, y1, z1 ); // във върха на първия пилон
+			ball.castShadow = true;
+			scene.add( ball );
+
+
+			// създаване на земята
+			var ground = new THREE.Mesh(
+				new THREE.BoxGeometry( 200, 2, 140 ),
+				new THREE.MeshLambertMaterial( {color: 'moccasin'} )
+			);
+			ground.position.y = -1;
+			ground.receiveShadow = true;
+			scene.add( ground );
+		
+			// създаване на двата пилона
+			scene.add( new Pillar( x1, y1, z1, ground.material ) );
+			scene.add( new Pillar( x2, y2, z2, ground.material ) );
+
+			// светлина
+			var light = new THREE.PointLight( 'white', 3 );
+			light.position.set( 0, 60, 0 );
+			light.decay = 0;
+			light.castShadow = true;
+			light.shadow.normalBias = 0.3;
+			scene.add( light );
+
+			scene.add( new THREE.AmbientLight( 'gold' ) );
+			
+			// вектор на движението
+			var v = new THREE.Vector3( x2-x1, y2-y1, z2-z1 );
+
+			var n = 200; // брой стъпки
+			var vn = new THREE.Vector3( v.x/n, v.y/n, v.z/n ); // вектор на една стъпка
+			
+			function drawFrame( t )
+			{
+				// пресмятаме позицията на ball според
+				//текущата позиция и вектора на една стъпка
+				if (n)
+				{
+					ball.position.x += vn.x;
+					ball.position.y += vn.y;
+					ball.position.z += vn.z;
+					n--; // намаляваме броя кадри
+				}
+				
+				scene.rotation.y = t/3000;
+				
+				renderer.render( scene, camera );
+			}
+			
+		</script>
+	</body>
+</html>
