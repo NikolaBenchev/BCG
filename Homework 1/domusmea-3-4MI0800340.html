@@ -106,6 +106,39 @@
 			westSouth.position.set(-5.9, 1, 5.9);
 			scene.add(westSouth);
 
+			const curvedWall = new THREE.Group();
+			geometry = new THREE.BoxGeometry(0.2, 2, 2);
+			const partOne = new THREE.Mesh(geometry, material);
+			curvedWall.add(partOne);
+			
+			const partTwo = new THREE.Mesh(geometry, material);
+			partTwo.rotation.set(0, -Math.PI / 3, 0);
+			partTwo.position.set(-0.8, 0, 1.4);
+			curvedWall.add(partTwo);
+
+			const partThree = new THREE.Mesh(new THREE.BoxGeometry(0.2, 2, 3.8), material);
+			partThree.position.set(-1.615, 0, 3.71);
+			curvedWall.add(partThree);
+
+			curvedWall.position.set(-3.9, 1, 0.2);
+
+			geometry = new THREE.BoxGeometry(6.7, 2, 0.2);
+			let wall = new THREE.Mesh(geometry, material);
+			wall.position.set(-0.5, 1, -0.9);
+			scene.add(wall);
+
+			geometry = new THREE.BoxGeometry(6.7, 2, 0.2);
+			wall = new THREE.Mesh(geometry, material);
+			wall.position.set(-0.5, 1, 5.9);
+			scene.add(wall);
+
+			geometry = new THREE.BoxGeometry(0.2, 2, 6.7);
+			wall = new THREE.Mesh(geometry, material);
+			wall.position.set(0, 1, 2.5);
+			scene.add(wall);
+
+			scene.add(curvedWall);
+
 		</script>
 		
 	</body>
