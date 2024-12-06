@@ -12,7 +12,8 @@
 			{ "imports": {
 				"three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
 				"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/",
-				"domus-mea": "https://cdn.jsdelivr.net/gh/boytchev/CourseOKG@latest/domus-mea.js"
+				"domus-mea": "https://cdn.jsdelivr.net/gh/boytchev/CourseOKG@latest/domus-mea.js",
+				"csg/": "https://cdn.jsdelivr.net/gh/looeee/threejs-csg@main/src/CSG/"
 			} }
 		</script>
 	</head>
@@ -22,6 +23,8 @@
 		<script type="module">
 			import * as THREE from "three";
 			import {domusMea, scene, renderer, camera} from "domus-mea";
+			import {CSG} from "csg/CSG.js";
+
 
 			domusMea( '4MI0800340' ); // факултетен номер 
 			
@@ -46,10 +49,21 @@
 
 			
 			// куб 2х2х2 метра
-			var geometry = new THREE.BoxGeometry( 7, 2, 0.2 ),
-			material = new THREE.MeshPhongMaterial( {color: 'crimson'} );
+			
+			let geometry = new THREE.BoxGeometry(0.75, 1.5, 0.2);
+			const door = new THREE.Mesh(geometry);
+			geometry = new THREE.BoxGeometry(1, 1, 0.2);
+			const window = new THREE.Mesh(geometry);
+			// door.position.set(1, 1, 0);
+			
+			geometry = new THREE.BoxGeometry( 7, 2, 0.2 )
+			let material = new THREE.MeshPhongMaterial( {color: 'crimson'} );
 				
-			const north = new THREE.Mesh( geometry, material );
+			const northBase = new THREE.Mesh( geometry, material );
+			let csg = new CSG();
+			csg.subtract([northBase, window]);
+			const north = csg.toMesh();
+			north.material = material;
 			north.position.set( -0.5, 1, -4.9 );
 			north.receiveShadow = true;
 			north.castShadow = true;
@@ -115,30 +129,78 @@
 			partTwo.rotation.set(0, -Math.PI / 3, 0);
 			partTwo.position.set(-0.8, 0, 1.4);
 			curvedWall.add(partTwo);
-
-			const partThree = new THREE.Mesh(new THREE.BoxGeometry(0.2, 2, 3.8), material);
+			
+			const partThreeBase = new THREE.Mesh(new THREE.BoxGeometry(0.2, 2, 3.8), material);			
+			door.rotation.set(0, Math.PI / 2, 0);
+			door.position.set(0, -0.25, 0);
+			csg = new CSG();
+			csg.subtract([partThreeBase, door]);
+			const partThree = csg.toMesh();
+			
 			partThree.position.set(-1.615, 0, 3.71);
+			partThree.material = material;
 			curvedWall.add(partThree);
-
 			curvedWall.position.set(-3.9, 1, 0.2);
+			scene.add(curvedWall);
 
 			geometry = new THREE.BoxGeometry(6.7, 2, 0.2);
-			let wall = new THREE.Mesh(geometry, material);
+			let wallBase = new THREE.Mesh(geometry, material);
+			door.rotation.set(0, 0, 0);
+			csg = new CSG();
+			csg.subtract([wallBase, door]);
+			let wall = csg.toMesh();
+			wall.material = material;
 			wall.position.set(-0.5, 1, -0.9);
 			scene.add(wall);
 
 			geometry = new THREE.BoxGeometry(6.7, 2, 0.2);
-			wall = new THREE.Mesh(geometry, material);
+			wallBase = new THREE.Mesh(geometry, material);
+			// door.rotation.set(0, Math.PI / 2, 0);
+			csg = new CSG();
+			csg.subtract([wallBase, door]);
+			wall = csg.toMesh();
+			wall.material = material;
 			wall.position.set(-0.5, 1, 5.9);
 			scene.add(wall);
 
 			geometry = new THREE.BoxGeometry(0.2, 2, 6.7);
-			wall = new THREE.Mesh(geometry, material);
-			wall.position.set(0, 1, 2.5);
+			wallBase = new THREE.Mesh(geometry, material);
+			door.rotation.set(0, Math.PI / 2, 0);
+			csg = new CSG();
+			csg.subtract([wallBase, door]);
+			wall = csg.toMesh();
+			wall.position.set(1, 1, 2.5);
 			scene.add(wall);
 
-			scene.add(curvedWall);
+			material = new THREE.MeshPhongMaterial({ color: 'darkgray'});
+			geometry = new THREE.BoxGeometry(0.75, 1.2, 0.75);
+			const stereoBase = new THREE.Mesh(geometry, material);
+			geometry = new THREE.CylinderGeometry(0.25, 0.2, 0.15, 32);
+			const speakerSubtr = new THREE.Mesh(geometry, material);
+			speakerSubtr.rotation.set(Math.PI / 2, 0, 0);
+			speakerSubtr.position.set(0, 0, 0.35);
+			csg = new CSG();
+			csg.subtract([stereoBase, speakerSubtr])
+			const stereo = csg.toMesh();
+			stereo.position.set(0.5, 0.6, -0.5);
+			scene.add(stereo);
 
+			const table = new THREE.Group();
+			geometry = new THREE.BoxGeometry(1.5, 0.2, 4);
+			material = new THREE.MeshPhongMaterial({ color: "wood" });
+			const tableTop = new THREE.Mesh(geometry, material);
+			tableTop.position.set(0, 0.5, 0);
+			table.add(tableTop);
+			geometry = new THREE.BoxGeometry(1.5, 1, 0.2);
+			const tableLeft = new THREE.Mesh(geometry, material);
+			tableLeft.position.set(0, 0, 2);
+			table.add(tableLeft);
+			const tableRight = tableLeft.clone();
+			tableRight.position.set(0, 0, -2);
+			table.add(tableRight);
+
+			table.position.set(2.5, 0.25, 2.5);
+			scene.add(table);
 		</script>
 		
 	</body>
